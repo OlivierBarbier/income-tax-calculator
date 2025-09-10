@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculateur d'Impôts 2024</title>
+    <title>Calculateur d'Impôts 2025 - Accessible</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
             min-height: 100vh;
             padding: 1rem;
         }
@@ -40,6 +40,17 @@
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
+        }
+
+        .accessibility-notice {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
         }
 
         .main-content {
@@ -74,14 +85,14 @@
             display: block;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #374151;
+            color: #1f2937;
             font-size: 0.9rem;
         }
 
         input {
             width: 100%;
             padding: 1rem;
-            border: 2px solid #e5e7eb;
+            border: 3px solid #d1d5db;
             border-radius: 12px;
             font-size: 1.1rem;
             font-weight: 500;
@@ -91,21 +102,21 @@
 
         input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1f2937;
+            box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.2);
             transform: translateY(-2px);
         }
 
         .quick-presets {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
+            border-top: 2px solid #e5e7eb;
         }
 
         .preset-title {
             font-size: 0.85rem;
             font-weight: 600;
-            color: #6b7280;
+            color: #4b5563;
             margin-bottom: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -117,31 +128,45 @@
         }
 
         .preset-btn {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: #f9fafb;
+            border: 2px solid #d1d5db;
             border-radius: 8px;
             padding: 0.75rem;
             font-size: 0.85rem;
-            color: #4a5568;
+            color: #1f2937;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: left;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        .preset-btn:hover {
-            background: #667eea;
+        .preset-btn:hover,
+        .preset-btn:focus {
+            background: #1f2937;
             color: white;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(31, 41, 55, 0.3);
+            outline: 3px solid #60a5fa;
         }
 
-        .results-section {
-            padding: 0;
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Bloc principal - Résumé de l'impôt */
+        .summary-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
         }
 
         .summary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1f2937, #111827);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -159,77 +184,139 @@
             opacity: 0.9;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            margin-bottom: 1rem;
         }
 
-        .metrics {
+        .summary-details {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            background: white;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
-        .metric {
-            padding: 1.5rem;
-            text-align: center;
-            border-right: 1px solid #e5e7eb;
+        .detail-item {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
         }
 
-        .metric:last-child {
-            border-right: none;
-        }
-
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1f2937;
+        .detail-value {
+            font-size: 1.2rem;
+            font-weight: 600;
             margin-bottom: 0.25rem;
         }
 
-        .metric-label {
+        .detail-label {
             font-size: 0.85rem;
-            color: #6b7280;
-            font-weight: 500;
+            opacity: 0.9;
         }
 
-        .breakdown {
-            padding: 2rem;
+        .monthly-summary {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            grid-column: 1 / -1;
+        }
+
+        .monthly-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .monthly-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Bloc séparé - Tranches d'imposition */
+        .breakdown-card {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border: 3px solid #cbd5e1;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(71, 85, 105, 0.15);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .breakdown-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+        }
+
+        .breakdown-header {
+            background: linear-gradient(135deg, #475569, #334155);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 3px solid #64748b;
         }
 
         .breakdown-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            margin: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .breakdown-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-top: 0.5rem;
+            font-weight: 400;
+        }
+
+        .breakdown-content {
+            padding: 2rem;
+            background: white;
         }
 
         .bracket {
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            border: 2px solid #e2e8f0;
             border-radius: 12px;
             padding: 1.25rem;
             margin-bottom: 1rem;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
+        .bracket:last-child {
+            margin-bottom: 0;
+        }
+
         .bracket.active {
-            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-            border-color: #0ea5e9;
+            background: #ffffff;
+            border-color: #3b82f6;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15);
         }
 
         .bracket.active::before {
-            content: '';
+            content: '●';
             position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #0ea5e9, #0284c7);
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .bracket.active .bracket-content {
+            margin-left: 2rem;
         }
 
         .bracket-header {
@@ -241,14 +328,24 @@
 
         .bracket-range {
             font-weight: 600;
-            color: #374151;
+            color: #1f2937;
             font-size: 0.95rem;
         }
 
         .bracket-tax {
             font-weight: 700;
-            color: #059669;
+            color: #1f2937;
             font-size: 1.1rem;
+            padding: 0.25rem 0.75rem;
+            background: #f1f5f9;
+            border-radius: 6px;
+            border: 2px solid #cbd5e1;
+        }
+
+        .bracket.active .bracket-tax {
+            background: #3b82f6;
+            color: white;
+            border-color: #2563eb;
         }
 
         .bracket-details {
@@ -256,59 +353,58 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.85rem;
-            color: #6b7280;
+            color: #4b5563;
         }
 
         .rate-badge {
-            background: #e5e7eb;
-            color: #374151;
-            padding: 0.25rem 0.75rem;
+            background: #e2e8f0;
+            color: #475569;
+            padding: 0.35rem 0.75rem;
             border-radius: 20px;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.75rem;
+            border: 2px solid #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .bracket.active .rate-badge {
-            background: #0ea5e9;
+            background: #3b82f6;
             color: white;
+            border-color: #2563eb;
         }
 
         .progress-bar {
             width: 100%;
-            height: 4px;
-            background: #e5e7eb;
-            border-radius: 2px;
+            height: 8px;
+            background: #e2e8f0;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
             margin-top: 0.75rem;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: repeating-linear-gradient(
+                45deg,
+                #3b82f6,
+                #3b82f6 10px,
+                #2563eb 10px,
+                #2563eb 20px
+            );
             border-radius: 2px;
             transition: width 0.8s ease;
         }
 
-        .monthly-info {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-top: 1.5rem;
-            text-align: center;
+        .zero-bracket {
+            opacity: 0.6;
         }
 
-        .monthly-value {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #0369a1;
-            margin-bottom: 0.25rem;
-        }
-
-        .monthly-label {
-            font-size: 0.85rem;
-            color: #0369a1;
-            opacity: 0.8;
+        .zero-bracket .bracket-tax {
+            background: #f1f5f9;
+            color: #64748b;
+            border-color: #cbd5e1;
         }
 
         @media (max-width: 768px) {
@@ -325,27 +421,35 @@
                 font-size: 2.5rem;
             }
             
-            .metrics {
+            .summary-details {
                 grid-template-columns: 1fr;
+                gap: 0.75rem;
             }
-            
-            .metric {
-                border-right: none;
-                border-bottom: 1px solid #e5e7eb;
+
+            .bracket.active .bracket-content {
+                margin-left: 0;
             }
-            
-            .metric:last-child {
-                border-bottom: none;
+
+            .bracket.active::before {
+                position: static;
+                display: inline;
+                margin-right: 0.5rem;
+                transform: none;
+            }
+
+            .breakdown-title {
+                font-size: 1.1rem;
             }
         }
 
         .error-message {
             background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
+            border: 2px solid #f87171;
+            color: #dc2626;
             padding: 0.75rem;
             border-radius: 8px;
             font-size: 0.85rem;
+            font-weight: 600;
             margin-top: 0.5rem;
             display: none;
         }
@@ -358,6 +462,44 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .bracket {
+                border-width: 3px;
+            }
+            
+            .bracket.active {
+                border-width: 4px;
+            }
+            
+            input {
+                border-width: 4px;
+            }
+            
+            .rate-badge {
+                border-width: 3px;
+            }
+        }
+
+        /* Focus indicators for better accessibility */
+        .bracket:focus-within {
+            outline: 3px solid #60a5fa;
+            outline-offset: 2px;
+        }
+
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     </style>
 </head>
 <body>
@@ -369,48 +511,73 @@
         <div class="main-content">
             <div class="card input-section">
                 <div class="form-group">
-                    <label for="income">Revenu imposable annuel</label>
-                    <input type="number" id="income" value="50000" min="0" step="1000" placeholder="Ex: 50000">
-                    <div class="error-message" id="income-error">Le revenu doit être positif</div>
+                    <label for="income">Revenu imposable annuel (en euros)</label>
+                    <input type="number" id="income" value="30000" min="0" step="1000" placeholder="Ex: 50000" aria-describedby="income-error">
+                    <div class="error-message" id="income-error" role="alert">Le revenu doit être positif</div>
                 </div>
 
                 <div class="form-group">
                     <label for="shares">Nombre de parts fiscales</label>
-                    <input type="number" id="shares" value="2" min="1" step="0.5" placeholder="Ex: 2">
-                    <div class="error-message" id="shares-error">Le nombre de parts doit être au moins 1</div>
+                    <input type="number" id="shares" value="1" min="1" step="0.5" placeholder="Ex: 2" aria-describedby="shares-error">
+                    <div class="error-message" id="shares-error" role="alert">Le nombre de parts doit être au moins 1</div>
+                </div>
+
+                <div class="quick-presets">
+                    <div class="preset-title">Exemples rapides</div>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="setPreset(30000, 1)" type="button">
+                            30 000€ - Célibataire
+                        </button>
+                        <button class="preset-btn" onclick="setPreset(50000, 2)" type="button">
+                            50 000€ - Couple
+                        </button>
+                        <button class="preset-btn" onclick="setPreset(75000, 2.5)" type="button">
+                            75 000€ - Couple + 1 enfant
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="card results-section">
-                <div class="summary">
-                    <div class="total-tax" id="totalTax">0€</div>
-                    <div class="summary-label">Impôt annuel total</div>
+            <div class="results-container">
+                <!-- Bloc principal : Résumé de l'impôt -->
+                <div class="summary-card">
+                    <div class="summary">
+                        <div class="total-tax" id="totalTax" aria-live="polite">0€</div>
+                        <div class="summary-label">Impôt annuel total</div>
+                        
+                        <div class="summary-details">
+                            <div class="monthly-summary">
+                                <div class="monthly-value" id="monthlyTax" aria-live="polite">0€</div>
+                                <div class="monthly-label">Prélèvement mensuel estimé</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value" id="quotient" aria-live="polite">0€</div>
+                                <div class="detail-label">Quotient familial</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value" id="marginalRate" aria-live="polite">0%</div>
+                                <div class="detail-label">Taux marginal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value" id="effectiveRate" aria-live="polite">0%</div>
+                                <div class="detail-label">Taux effectif</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="metrics">
-                    <div class="metric">
-                        <div class="metric-value" id="quotient">0€</div>
-                        <div class="metric-label">Quotient familial</div>
+                <!-- Bloc séparé : Tranches d'imposition -->
+                <div class="breakdown-card">
+                    <div class="breakdown-header">
+                        <div class="breakdown-title">
+                            📊 Répartition par tranches d'imposition
+                        </div>
+                        <div class="breakdown-subtitle">
+                            Détail du calcul selon le barème fiscal français
+                        </div>
                     </div>
-                    <div class="metric">
-                        <div class="metric-value" id="effectiveRate">0%</div>
-                        <div class="metric-label">Taux effectif</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-value" id="marginalRate">0%</div>
-                        <div class="metric-label">Taux marginal</div>
-                    </div>
-                </div>
-
-                <div class="breakdown">
-                    <div class="breakdown-title">
-                        📊 Répartition par tranches d'imposition
-                    </div>
-                    <div id="brackets"></div>
-                    
-                    <div class="monthly-info">
-                        <div class="monthly-value" id="monthlyTax">0€</div>
-                        <div class="monthly-label">Prélèvement mensuel estimé</div>
+                    <div class="breakdown-content">
+                        <div id="brackets" role="region" aria-label="Détail des tranches d'imposition"></div>
                     </div>
                 </div>
             </div>
@@ -546,26 +713,34 @@
 
             taxBrackets.forEach((bracket, index) => {
                 const bracketTax = result.bracketTaxes[index];
-                const isActive = bracketTax > 0;
+                const isActive = bracketTax > 0 || index === 0;
                 const percentage = maxTax > 0 ? (bracketTax / maxTax) * 100 : 0;
 
                 const bracketDiv = document.createElement('div');
-                bracketDiv.className = `bracket ${isActive ? 'active' : ''} fade-in`;
+                bracketDiv.className = `bracket ${isActive ? 'active' : ''} ${bracketTax === 0 && index != 0 ? 'zero-bracket' : ''} fade-in`;
                 bracketDiv.style.animationDelay = `${index * 0.1}s`;
+                bracketDiv.setAttribute('tabindex', '0');
 
                 const incomePercentage = result.totalTax > 0 ? (bracketTax / result.totalTax) * 100 : 0;
 
                 bracketDiv.innerHTML = `
-                    <div class="bracket-header">
-                        <span class="bracket-range">${formatRange(bracket)}</span>
-                        <span class="bracket-tax">${formatCurrency(bracketTax)}</span>
-                    </div>
-                    <div class="bracket-details">
-                        <span class="rate-badge">Taux ${bracket.label}</span>
-                        ${isActive ? `<span>${incomePercentage.toFixed(1)}% de l'impôt total</span>` : '<span>Non concerné</span>'}
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    <div class="bracket-content">
+                        <div class="bracket-header">
+                            <span class="bracket-range">${formatRange(bracket)}</span>
+                            <span class="bracket-tax" aria-label="Impôt pour cette tranche: ${formatCurrency(bracketTax)}">${formatCurrency(bracketTax)}</span>
+                        </div>
+                        <div class="bracket-details">
+                            <span class="rate-badge">Taux ${bracket.label}</span>
+                            ${isActive ? `<span aria-label="${incomePercentage.toFixed(1)} pourcent de l'impôt total">${incomePercentage.toFixed(1)}% de l'impôt total</span>` : '<span>Non concerné</span>'}
+                        </div>
+                        <div class="progress-bar" role="progressbar" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100" aria-label="Proportion relative de cette tranche">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <span class="sr-only">
+                            Tranche ${index + 1}: ${formatRange(bracket)} au taux de ${bracket.label}. 
+                            Impôt: ${formatCurrency(bracketTax)}
+                            ${isActive ? `. Représente ${incomePercentage.toFixed(1)}% de votre impôt total.` : '. Cette tranche ne vous concerne pas.'}
+                        </span>
                     </div>
                 `;
 
@@ -577,6 +752,14 @@
             document.getElementById('income').value = income;
             document.getElementById('shares').value = shares;
             updateResults();
+            
+            // Announce the change to screen readers
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.className = 'sr-only';
+            announcement.textContent = `Valeurs mises à jour: revenu ${formatCurrency(income)}, ${shares} parts fiscales`;
+            document.body.appendChild(announcement);
+            setTimeout(() => document.body.removeChild(announcement), 1000);
         }
 
         // Événements pour mise à jour en temps réel avec debouncing
@@ -588,6 +771,16 @@
 
         document.getElementById('income').addEventListener('input', debouncedUpdate);
         document.getElementById('shares').addEventListener('input', debouncedUpdate);
+
+        // Support navigation clavier pour les presets
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    btn.click();
+                }
+            });
+        });
 
         // Calcul initial
         updateResults();
