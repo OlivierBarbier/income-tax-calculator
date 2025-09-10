@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur d'Impôts 2024</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .input-section {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .quick-presets {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .preset-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .preset-buttons {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .preset-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .results-section {
+            padding: 0;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .total-tax {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .summary-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            background: white;
+        }
+
+        .metric {
+            padding: 1.5rem;
+            text-align: center;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .metric:last-child {
+            border-right: none;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .breakdown {
+            padding: 2rem;
+        }
+
+        .breakdown-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bracket {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bracket.active {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-color: #0ea5e9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+        }
+
+        .bracket.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #0ea5e9, #0284c7);
+        }
+
+        .bracket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .bracket-range {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .bracket-tax {
+            font-weight: 700;
+            color: #059669;
+            font-size: 1.1rem;
+        }
+
+        .bracket-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .rate-badge {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .bracket.active .rate-badge {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            transition: width 0.8s ease;
+        }
+
+        .monthly-info {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .monthly-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0369a1;
+            margin-bottom: 0.25rem;
+        }
+
+        .monthly-label {
+            font-size: 0.85rem;
+            color: #0369a1;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .total-tax {
+                font-size: 2.5rem;
+            }
+            
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .metric {
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            
+            .metric:last-child {
+                border-bottom: none;
+            }
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Calculateur d'Impôts 2024</h1>
+            <p>Calculez précisément votre impôt sur le revenu français avec simulation détaillée</p>
+        </div>
+
+        <div class="main-content">
+            <div class="card input-section">
+                <div class="form-group">
+                    <label for="income">Revenu imposable annuel</label>
+                    <input type="number" id="income" value="50000" min="0" step="1000" placeholder="Ex: 50000">
+                    <div class="error-message" id="income-error">Le revenu doit être positif</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="shares">Nombre de parts fiscales</label>
+                    <input type="number" id="shares" value="2" min="1" step="0.5" placeholder="Ex: 2">
+                    <div class="error-message" id="shares-error">Le nombre de parts doit être au moins 1</div>
+                </div>
+
+                <div class="quick-presets">
+                    <div class="preset-title">Exemples rapides</div>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="setPreset(25000, 1)">Célibataire • 25 000€</button>
+                        <button class="preset-btn" onclick="setPreset(45000, 2)">Couple • 45 000€</button>
+                        <button class="preset-btn" onclick="setPreset(65000, 2.5)">Couple + enfant • 65 000€</button>
+                        <button class="preset-btn" onclick="setPreset(85000, 3)">Famille • 85 000€</button>
+                        <button class="preset-btn" onclick="setPreset(120000, 4)">Grande famille • 120 000€</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card results-section">
+                <div class="summary">
+                    <div class="total-tax" id="totalTax">0€</div>
+                    <div class="summary-label">Impôt annuel total</div>
+                </div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value" id="quotient">0€</div>
+                        <div class="metric-label">Quotient familial</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="effectiveRate">0%</div>
+                        <div class="metric-label">Taux effectif</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="marginalRate">0%</div>
+                        <div class="metric-label">Taux marginal</div>
+                    </div>
+                </div>
+
+                <div class="breakdown">
+                    <div class="breakdown-title">
+                        📊 Répartition par tranches d'imposition
+                    </div>
+                    <div id="brackets"></div>
+                    
+                    <div class="monthly-info">
+                        <div class="monthly-value" id="monthlyTax">0€</div>
+                        <div class="monthly-label">Prélèvement mensuel estimé</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tranches d'imposition 2024 (France métropolitaine)
+        const taxBrackets = [
+            { rate: 0, min: 0, max: 11497, label: "0%" },
+            { rate: 0.11, min: 11497, max: 29315, label: "11%" },
+            { rate: 0.30, min: 29315, max: 83823, label: "30%" },
+            { rate: 0.41, min: 83823, max: 180294, label: "41%" },
+            { rate: 0.45, min: 180294, max: Infinity, label: "45%" }
+        ];
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(Math.round(amount));
+        }
+
+        function formatPercentage(rate) {
+            return (rate * 100).toFixed(1) + '%';
+        }
+
+        function formatRange(bracket) {
+            if (bracket.max === Infinity) {
+                return `Au-delà de ${formatCurrency(bracket.min)}`;
+            }
+            return `${formatCurrency(bracket.min)} - ${formatCurrency(bracket.max)}`;
+        }
+
+        function getMarginalRate(quotient) {
+            for (const bracket of taxBrackets) {
+                if (quotient > bracket.min && quotient <= bracket.max) {
+                    return bracket.rate;
+                }
+            }
+            return 0;
+        }
+
+        function calculateTax(income, shares) {
+            if (!income || !shares || income < 0 || shares < 1) {
+                return null;
+            }
+
+            const quotient = income / shares;
+            let totalTax = 0;
+            const bracketTaxes = [];
+
+            for (const bracket of taxBrackets) {
+                let bracketTax = 0;
+                if (quotient > bracket.min) {
+                    const taxableInBracket = Math.min(quotient, bracket.max) - bracket.min;
+                    bracketTax = taxableInBracket * bracket.rate;
+                }
+                bracketTaxes.push(bracketTax);
+                totalTax += bracketTax;
+            }
+
+            const marginalRate = getMarginalRate(quotient);
+            const effectiveRate = income > 0 ? totalTax / income : 0;
+
+            return {
+                totalTax,
+                quotient,
+                bracketTaxes,
+                effectiveRate,
+                marginalRate,
+                monthlyTax: totalTax / 12
+            };
+        }
+
+        function validateInputs() {
+            const income = parseFloat(document.getElementById('income').value);
+            const shares = parseFloat(document.getElementById('shares').value);
+            
+            let valid = true;
+
+            // Validation du revenu
+            const incomeError = document.getElementById('income-error');
+            if (isNaN(income) || income < 0) {
+                incomeError.style.display = 'block';
+                valid = false;
+            } else {
+                incomeError.style.display = 'none';
+            }
+
+            // Validation des parts
+            const sharesError = document.getElementById('shares-error');
+            if (isNaN(shares) || shares < 1) {
+                sharesError.style.display = 'block';
+                valid = false;
+            } else {
+                sharesError.style.display = 'none';
+            }
+
+            return valid;
+        }
+
+        function updateResults() {
+            if (!validateInputs()) {
+                return;
+            }
+
+            const income = parseFloat(document.getElementById('income').value);
+            const shares = parseFloat(document.getElementById('shares').value);
+            
+            const result = calculateTax(income, shares);
+            
+            if (!result) return;
+
+            // Mise à jour des métriques principales
+            document.getElementById('totalTax').textContent = formatCurrency(result.totalTax);
+            document.getElementById('quotient').textContent = formatCurrency(result.quotient);
+            document.getElementById('effectiveRate').textContent = formatPercentage(result.effectiveRate);
+            document.getElementById('marginalRate').textContent = formatPercentage(result.marginalRate);
+            document.getElementById('monthlyTax').textContent = formatCurrency(result.monthlyTax);
+
+            // Mise à jour de la répartition par tranches
+            updateBracketBreakdown(result);
+        }
+
+        function updateBracketBreakdown(result) {
+            const bracketsContainer = document.getElementById('brackets');
+            bracketsContainer.innerHTML = '';
+
+            const maxTax = Math.max(...result.bracketTaxes);
+
+            taxBrackets.forEach((bracket, index) => {
+                const bracketTax = result.bracketTaxes[index];
+                const isActive = bracketTax > 0;
+                const percentage = maxTax > 0 ? (bracketTax / maxTax) * 100 : 0;
+
+                const bracketDiv = document.createElement('div');
+                bracketDiv.className = `bracket ${isActive ? 'active' : ''} fade-in`;
+                bracketDiv.style.animationDelay = `${index * 0.1}s`;
+
+                const incomePercentage = result.totalTax > 0 ? (bracketTax / result.totalTax) * 100 : 0;
+
+                bracketDiv.innerHTML = `
+                    <div class="bracket-header">
+                        <span class="bracket-range">${formatRange(bracket)}</span>
+                        <span class="bracket-tax">${formatCurrency(bracketTax)}</span>
+                    </div>
+                    <div class="bracket-details">
+                        <span class="rate-badge">Taux ${bracket.label}</span>
+                        ${isActive ? `<span>${incomePercentage.toFixed(1)}% de l'impôt total</span>` : '<span>Non concerné</span>'}
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+
+                bracketsContainer.appendChild(bracketDiv);
+            });
+        }
+
+        function setPreset(income, shares) {
+            document.getElementById('income').value = income;
+            document.getElementById('shares').value = shares;
+            updateResults();
+        }
+
+        // Événements pour mise à jour en temps réel avec debouncing
+        let updateTimeout;
+        function debouncedUpdate() {
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(updateResults, 300);
+        }
+
+        document.getElementById('income').addEventListener('input', debouncedUpdate);
+        document.getElementById('shares').addEventListener('input', debouncedUpdate);
+
+        // Calcul initial
+        updateResults();
+    </script>
+</body>
+</html>
