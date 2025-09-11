@@ -464,11 +464,11 @@
                     const taxableInBracket = Math.min(quotient, bracket.max) - bracket.min;
                     bracketTax = taxableInBracket * bracket.rate;
                 }
-                bracketTaxes.push(bracketTax * shares);
+                bracketTaxes.push(bracketTax);
                 taxOnQuotient += bracketTax;
             }
 
-            const totalTax = taxOnQuotient * shares;
+            const totalTax = taxOnQuotient;
             const monthlyTax = totalTax / 12;
             const effectiveRate = income > 0 ? (totalTax / income) * 100 : 0;
 
