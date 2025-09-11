@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -112,8 +111,8 @@
             box-shadow: 0 0 0 3px rgba(91, 58, 160, 0.1);
         }
 
-        /* Nouveau style pour le contrôle des parts fiscales */
-        .shares-control {
+        /* Style unifié pour les contrôles avec boutons */
+        .control-with-buttons {
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -124,12 +123,12 @@
             transition: all 0.2s;
         }
 
-        .shares-control:focus-within {
+        .control-with-buttons:focus-within {
             border-color: #5B3AA0;
             box-shadow: 0 0 0 3px rgba(91, 58, 160, 0.1);
         }
 
-        .shares-button {
+        .control-button {
             background: #5B3AA0;
             color: white;
             border: none;
@@ -147,23 +146,23 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .shares-button:hover {
+        .control-button:hover {
             background: #4C2D8F;
             transform: translateY(-1px);
         }
 
-        .shares-button:active {
+        .control-button:active {
             transform: translateY(0);
             background: #3D2770;
         }
 
-        .shares-button:disabled {
+        .control-button:disabled {
             background: #cbd5e0;
             cursor: not-allowed;
             transform: none;
         }
 
-        .shares-input {
+        .control-input {
             flex: 1;
             text-align: center;
             border: none;
@@ -174,7 +173,7 @@
             padding: 0.5rem;
         }
 
-        .shares-input:focus {
+        .control-input:focus {
             outline: none;
             border: none;
             box-shadow: none;
@@ -355,7 +354,7 @@
                 display: none;
             }
 
-            .shares-button {
+            .control-button {
                 width: 44px;
                 height: 44px;
                 font-size: 1.3rem;
@@ -375,14 +374,18 @@
                     <div class="input-section">
                         <div class="form-group">
                             <label for="income">Revenu imposable annuel (€)</label>
-                            <input type="number" id="income" value="0" min="0" step="1000">
+                            <div class="control-with-buttons">
+                                <button type="button" class="control-button" id="incomeDecrement">−</button>
+                                <input type="number" id="income" class="control-input" value="0" min="0" step="1000">
+                                <button type="button" class="control-button" id="incomeIncrement">+</button>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="shares">Parts fiscales</label>
-                            <div class="shares-control">
-                                <button type="button" class="shares-button" id="sharesDecrement">−</button>
-                                <input type="number" id="shares" class="shares-input" value="1" min="1" max="10" step="0.5" readonly>
-                                <button type="button" class="shares-button" id="sharesIncrement">+</button>
+                            <div class="control-with-buttons">
+                                <button type="button" class="control-button" id="sharesDecrement">−</button>
+                                <input type="number" id="shares" class="control-input" value="1" min="1" max="10" step="0.5" readonly>
+                                <button type="button" class="control-button" id="sharesIncrement">+</button>
                             </div>
                         </div>
                     </div>
@@ -535,6 +538,30 @@
             });
         }
 
+        // Gestion des boutons + et - pour le revenu
+        function updateIncomeButtons() {
+            const incomeInput = document.getElementById('income');
+            const decrementBtn = document.getElementById('incomeDecrement');
+            
+            const currentValue = parseFloat(incomeInput.value) || 0;
+            const minValue = parseFloat(incomeInput.min);
+            
+            decrementBtn.disabled = currentValue <= minValue;
+        }
+
+        function changeIncome(delta) {
+            const incomeInput = document.getElementById('income');
+            const currentValue = parseFloat(incomeInput.value) || 0;
+            const step = 1000; // Pas de 1000€
+            const minValue = parseFloat(incomeInput.min);
+            
+            const newValue = Math.max(minValue, currentValue + (delta * step));
+            
+            incomeInput.value = newValue;
+            updateIncomeButtons();
+            updateResults();
+        }
+
         // Gestion des boutons + et - pour les parts fiscales
         function updateSharesButtons() {
             const sharesInput = document.getElementById('shares');
@@ -564,20 +591,31 @@
         }
 
         // Événements
-        document.getElementById('income').addEventListener('input', updateResults);
+        document.getElementById('income').addEventListener('input', () => {
+            updateIncomeButtons();
+            updateResults();
+        });
+        
         document.getElementById('shares').addEventListener('input', () => {
             updateSharesButtons();
             updateResults();
         });
 
+        // Boutons de contrôle du revenu
+        document.getElementById('incomeDecrement').addEventListener('click', () => changeIncome(-1));
+        document.getElementById('incomeIncrement').addEventListener('click', () => changeIncome(1));
+
+        // Boutons de contrôle des parts fiscales
         document.getElementById('sharesDecrement').addEventListener('click', () => changeShares(-1));
         document.getElementById('sharesIncrement').addEventListener('click', () => changeShares(1));
 
         // Prévention du défilement sur les champs numériques (mobile)
+        document.getElementById('income').addEventListener('wheel', (e) => e.preventDefault());
         document.getElementById('shares').addEventListener('wheel', (e) => e.preventDefault());
 
         // Calcul initial
         updateResults();
+        updateIncomeButtons();
         updateSharesButtons();
     </script>
 </body>
