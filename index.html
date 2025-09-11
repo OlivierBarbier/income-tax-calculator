@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -109,6 +110,74 @@
             outline: none;
             border-color: #5B3AA0;
             box-shadow: 0 0 0 3px rgba(91, 58, 160, 0.1);
+        }
+
+        /* Nouveau style pour le contrôle des parts fiscales */
+        .shares-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f8f9fa;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .shares-control:focus-within {
+            border-color: #5B3AA0;
+            box-shadow: 0 0 0 3px rgba(91, 58, 160, 0.1);
+        }
+
+        .shares-button {
+            background: #5B3AA0;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .shares-button:hover {
+            background: #4C2D8F;
+            transform: translateY(-1px);
+        }
+
+        .shares-button:active {
+            transform: translateY(0);
+            background: #3D2770;
+        }
+
+        .shares-button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .shares-input {
+            flex: 1;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            padding: 0.5rem;
+        }
+
+        .shares-input:focus {
+            outline: none;
+            border: none;
+            box-shadow: none;
         }
 
         .result-section {
@@ -285,6 +354,12 @@
             .divider {
                 display: none;
             }
+
+            .shares-button {
+                width: 44px;
+                height: 44px;
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
@@ -304,7 +379,11 @@
                         </div>
                         <div class="form-group">
                             <label for="shares">Parts fiscales</label>
-                            <input type="number" id="shares" value="1" min="1" step="0.5">
+                            <div class="shares-control">
+                                <button type="button" class="shares-button" id="sharesDecrement">−</button>
+                                <input type="number" id="shares" class="shares-input" value="1" min="1" max="10" step="0.5" readonly>
+                                <button type="button" class="shares-button" id="sharesIncrement">+</button>
+                            </div>
                         </div>
                     </div>
                     <div class="result-section">
@@ -456,12 +535,50 @@
             });
         }
 
+        // Gestion des boutons + et - pour les parts fiscales
+        function updateSharesButtons() {
+            const sharesInput = document.getElementById('shares');
+            const decrementBtn = document.getElementById('sharesDecrement');
+            const incrementBtn = document.getElementById('sharesIncrement');
+            
+            const currentValue = parseFloat(sharesInput.value);
+            const minValue = parseFloat(sharesInput.min);
+            const maxValue = parseFloat(sharesInput.max);
+            
+            decrementBtn.disabled = currentValue <= minValue;
+            incrementBtn.disabled = currentValue >= maxValue;
+        }
+
+        function changeShares(delta) {
+            const sharesInput = document.getElementById('shares');
+            const currentValue = parseFloat(sharesInput.value) || 1;
+            const step = 0.5;
+            const minValue = parseFloat(sharesInput.min);
+            const maxValue = parseFloat(sharesInput.max);
+            
+            const newValue = Math.max(minValue, Math.min(maxValue, currentValue + (delta * step)));
+            
+            sharesInput.value = newValue;
+            updateSharesButtons();
+            updateResults();
+        }
+
         // Événements
         document.getElementById('income').addEventListener('input', updateResults);
-        document.getElementById('shares').addEventListener('input', updateResults);
+        document.getElementById('shares').addEventListener('input', () => {
+            updateSharesButtons();
+            updateResults();
+        });
+
+        document.getElementById('sharesDecrement').addEventListener('click', () => changeShares(-1));
+        document.getElementById('sharesIncrement').addEventListener('click', () => changeShares(1));
+
+        // Prévention du défilement sur les champs numériques (mobile)
+        document.getElementById('shares').addEventListener('wheel', (e) => e.preventDefault());
 
         // Calcul initial
         updateResults();
+        updateSharesButtons();
     </script>
 </body>
 </html>
